@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="ACCESA Smart Cities - Sistema de Pagos Automatizados para Accesibilidad en Ciudades Inteligentes con Hedera Blockchain">
+    <title>ACCESA Smart Cities | Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <!-- ===== HEADER / NAV ===== -->
+    <header class="header" role="banner">
+        <div class="header__container">
+            <div class="header__logo">
+                <span class="header__icon" aria-hidden="true">♿</span>
+                <h1 class="header__title">ACCESA <span class="header__highlight">Smart Cities</span></h1>
+            </div>
+            <nav class="header__nav" role="navigation" aria-label="Navegación principal">
+                <a href="#dashboard" class="nav__link active" data-section="dashboard">Dashboard</a>
+                <a href="#agents" class="nav__link" data-section="agents">Agentes</a>
+                <a href="#transactions" class="nav__link" data-section="transactions">Transacciones</a>
+            </nav>
+            <div class="header__status" id="connectionStatus" role="status" aria-live="polite">
+                <span class="status__dot status__dot--disconnected"></span>
+                <span class="status__text">Desconectado</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="main" role="main">
+        <!-- ===== HERO SECTION ===== -->
+        <section class="hero" aria-label="Introducción">
+            <div class="hero__particles" aria-hidden="true">
+                <div class="particle particle--1"></div>
+                <div class="particle particle--2"></div>
+                <div class="particle particle--3"></div>
+                <div class="particle particle--4"></div>
+                <div class="particle particle--5"></div>
+            </div>
+            <div class="hero__content">
+                <span class="hero__badge">🏆 VendimiaTech Hackathon 2026 • Track Hedera</span>
+                <h2 class="hero__title">
+                    Ciudades Inteligentes
+                    <span class="hero__gradient-text">Inclusivas</span>
+                </h2>
+                <p class="hero__description">
+                    Agentes de IA que realizan pagos automáticos en blockchain
+                    para servicios de accesibilidad urbana.
+                </p>
+                <div class="hero__actions">
+                    <button class="btn btn--primary btn--glow" id="btnConnect" aria-label="Conectar con Hedera Testnet">
+                        <span class="btn__icon">🔗</span> Conectar a Hedera
+                    </button>
+                    <button class="btn btn--secondary" id="btnDemo" aria-label="Ejecutar demo completa">
+                        <span class="btn__icon">🚀</span> Demo Rápida
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== STATS CARDS ===== -->
+        <section class="stats" id="dashboard" aria-label="Panel de estadísticas">
+            <div class="stats__container">
+                <div class="stat-card stat-card--hbar" id="cardHbar">
+                    <div class="stat-card__icon" aria-hidden="true">💰</div>
+                    <div class="stat-card__content">
+                        <span class="stat-card__value" id="hbarBalance">--</span>
+                        <span class="stat-card__label">Balance HBAR</span>
+                    </div>
+                    <div class="stat-card__glow"></div>
+                </div>
+                <div class="stat-card stat-card--token" id="cardToken">
+                    <div class="stat-card__icon" aria-hidden="true">🪙</div>
+                    <div class="stat-card__content">
+                        <span class="stat-card__value" id="tokenStatus">Sin crear</span>
+                        <span class="stat-card__label">Token ACCESA</span>
+                    </div>
+                    <div class="stat-card__glow"></div>
+                </div>
+                <div class="stat-card stat-card--users" id="cardUsers">
+                    <div class="stat-card__icon" aria-hidden="true">👥</div>
+                    <div class="stat-card__content">
+                        <span class="stat-card__value" id="usersCount">0</span>
+                        <span class="stat-card__label">Usuarios Registrados</span>
+                    </div>
+                    <div class="stat-card__glow"></div>
+                </div>
+                <div class="stat-card stat-card--services" id="cardServices">
+                    <div class="stat-card__icon" aria-hidden="true">🏛️</div>
+                    <div class="stat-card__content">
+                        <span class="stat-card__value" id="servicesCount">0</span>
+                        <span class="stat-card__label">Servicios Activos</span>
+                    </div>
+                    <div class="stat-card__glow"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== TOKEN SECTION ===== -->
+        <section class="section" id="tokenSection" aria-label="Crear Token ACCESA">
+            <div class="section__header">
+                <h2 class="section__title">
+                    <span class="section__icon" aria-hidden="true">🪙</span>
+                    Token ACCESA
+                </h2>
+                <p class="section__subtitle">Crea el token nativo para pagos de accesibilidad en Hedera Token Service (HTS)</p>
+            </div>
+            <div class="card card--glass">
+                <div class="token-info">
+                    <div class="token-info__detail">
+                        <span class="token-info__label">Nombre</span>
+                        <span class="token-info__value">ACCESA Smart Cities Token</span>
+                    </div>
+                    <div class="token-info__detail">
+                        <span class="token-info__label">Símbolo</span>
+                        <span class="token-info__value">ACCESA</span>
+                    </div>
+                    <div class="token-info__detail">
+                        <span class="token-info__label">Supply Inicial</span>
+                        <span class="token-info__value">1,000,000</span>
+                    </div>
+                    <div class="token-info__detail">
+                        <span class="token-info__label">Decimales</span>
+                        <span class="token-info__value">2</span>
+                    </div>
+                </div>
+                <button class="btn btn--primary btn--block btn--glow" id="btnCreateToken" aria-label="Crear Token ACCESA en Hedera">
+                    <span class="btn__icon">✨</span> Crear Token ACCESA
+                </button>
+                <div class="token-result hidden" id="tokenResult" role="alert" aria-live="polite">
+                    <div class="token-result__success">
+                        <span class="token-result__icon">✅</span>
+                        <span>Token creado: <strong id="tokenIdDisplay"></strong></span>
+                    </div>
+                    <a class="token-result__link" id="tokenHashscanLink" href="#" target="_blank" rel="noopener">
+                        Ver en HashScan →
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== AGENTS SECTION ===== -->
+        <section class="section" id="agents" aria-label="Gestión de agentes de IA">
+            <div class="section__header">
+                <h2 class="section__title">
+                    <span class="section__icon" aria-hidden="true">🤖</span>
+                    Agentes de IA
+                </h2>
+                <p class="section__subtitle">Crea agentes autónomos que interactúan y realizan pagos en blockchain</p>
+            </div>
+
+            <div class="agents-grid">
+                <!-- User Agents Panel -->
+                <div class="card card--glass">
+                    <h3 class="card__title">
+                        <span aria-hidden="true">👤</span> Agentes de Usuario
+                    </h3>
+                    <p class="card__description">Representan personas con necesidades de accesibilidad</p>
+                    <form class="form" id="formUserAgent" aria-label="Formulario crear agente de usuario">
+                        <div class="form__group">
+                            <label class="form__label" for="userId">ID del Usuario</label>
+                            <input class="form__input" type="text" id="userId" placeholder="ej: maria_lopez" required
+                                   aria-describedby="userIdHelp">
+                            <small class="form__help" id="userIdHelp">Identificador único sin espacios</small>
+                        </div>
+                        <div class="form__group">
+                            <label class="form__label" for="userNeeds">Necesidad de Accesibilidad</label>
+                            <select class="form__select" id="userNeeds" required aria-label="Tipo de necesidad">
+                                <option value="visual_impairment">👁️ Baja Visión</option>
+                                <option value="hearing_impairment">👂 Discapacidad Auditiva</option>
+                                <option value="mobility">🦽 Movilidad Reducida</option>
+                            </select>
+                        </div>
+                        <div class="form__group">
+                            <label class="form__label" for="userBudget">Presupuesto (ACCESA)</label>
+                            <input class="form__input" type="number" id="userBudget" value="500" min="1" required
+                                   aria-describedby="budgetHelp">
+                            <small class="form__help" id="budgetHelp">Tokens disponibles para el agente</small>
+                        </div>
+                        <button class="btn btn--primary btn--block" type="submit">
+                            <span class="btn__icon">➕</span> Crear Agente
+                        </button>
+                    </form>
+                    <div class="agents-list" id="userAgentsList" role="list" aria-label="Lista de agentes de usuario">
+                        <!-- Se llena dinámicamente -->
+                    </div>
+                </div>
+
+                <!-- Service Agents Panel -->
+                <div class="card card--glass">
+                    <h3 class="card__title">
+                        <span aria-hidden="true">🏢</span> Agentes de Servicio
+                    </h3>
+                    <p class="card__description">Representan edificios con servicios de accesibilidad</p>
+                    <form class="form" id="formServiceAgent" aria-label="Formulario crear agente de servicio">
+                        <div class="form__group">
+                            <label class="form__label" for="buildingName">Nombre del Edificio</label>
+                            <input class="form__input" type="text" id="buildingName"
+                                   placeholder="ej: Municipalidad de Mendoza" required>
+                        </div>
+                        <button class="btn btn--primary btn--block" type="submit">
+                            <span class="btn__icon">➕</span> Crear Servicio
+                        </button>
+                    </form>
+                    <div class="agents-list" id="serviceAgentsList" role="list" aria-label="Lista de agentes de servicio">
+                        <!-- Se llena dinámicamente -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== TRANSACTIONS SECTION ===== -->
+        <section class="section" id="transactions" aria-label="Transacciones automáticas">
+            <div class="section__header">
+                <h2 class="section__title">
+                    <span class="section__icon" aria-hidden="true">💸</span>
+                    Transacciones Automáticas
+                </h2>
+                <p class="section__subtitle">Los agentes interactúan y ejecutan pagos en Hedera de forma autónoma</p>
+            </div>
+
+            <div class="transaction-panel">
+                <div class="card card--glass">
+                    <form class="form transaction-form" id="formTransaction" aria-label="Ejecutar transacción">
+                        <div class="transaction-form__grid">
+                            <div class="form__group">
+                                <label class="form__label" for="txUserId">Usuario</label>
+                                <select class="form__select" id="txUserId" required aria-label="Seleccionar usuario">
+                                    <option value="">-- Selecciona usuario --</option>
+                                </select>
+                            </div>
+                            <div class="form__group">
+                                <label class="form__label" for="txServiceType">Tipo de Servicio</label>
+                                <select class="form__select" id="txServiceType" required aria-label="Tipo de servicio">
+                                    <option value="visual_impairment">👁️ Guía de Voz</option>
+                                    <option value="hearing_impairment">👂 Videos Lengua de Señas</option>
+                                    <option value="mobility">🦽 Mapa Accesible</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button class="btn btn--primary btn--block btn--glow btn--large" type="submit" id="btnExecuteTx">
+                            <span class="btn__icon">⚡</span> Ejecutar Transacción Agente-a-Agente
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Transaction Animation -->
+                <div class="tx-animation hidden" id="txAnimation" role="alert" aria-live="polite">
+                    <div class="tx-animation__flow">
+                        <div class="tx-animation__node tx-animation__user">
+                            <span class="tx-animation__emoji">👤</span>
+                            <span class="tx-animation__name" id="txAnimUser">Usuario</span>
+                        </div>
+                        <div class="tx-animation__arrow">
+                            <div class="tx-animation__pulse"></div>
+                            <span class="tx-animation__amount" id="txAnimAmount"></span>
+                        </div>
+                        <div class="tx-animation__node tx-animation__blockchain">
+                            <span class="tx-animation__emoji">⛓️</span>
+                            <span class="tx-animation__name">Hedera</span>
+                        </div>
+                        <div class="tx-animation__arrow">
+                            <div class="tx-animation__pulse tx-animation__pulse--delayed"></div>
+                            <span class="tx-animation__label">✅</span>
+                        </div>
+                        <div class="tx-animation__node tx-animation__service">
+                            <span class="tx-animation__emoji">🏢</span>
+                            <span class="tx-animation__name" id="txAnimService">Servicio</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Transaction History -->
+                <div class="card card--glass" id="txHistoryCard">
+                    <h3 class="card__title">
+                        <span aria-hidden="true">📋</span> Historial de Transacciones
+                    </h3>
+                    <div class="table-container">
+                        <table class="table" id="txHistoryTable" aria-label="Historial de transacciones">
+                            <thead>
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Usuario</th>
+                                    <th scope="col">Servicio</th>
+                                    <th scope="col">Costo</th>
+                                    <th scope="col">Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody id="txHistoryBody">
+                                <tr class="table__empty">
+                                    <td colspan="5">No hay transacciones aún. ¡Ejecuta una! ⚡</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- ===== TOAST NOTIFICATIONS ===== -->
+    <div class="toast-container" id="toastContainer" role="alert" aria-live="assertive"></div>
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="footer" role="contentinfo">
+        <div class="footer__container">
+            <p class="footer__text">
+                <strong>ACCESA Smart Cities</strong> · VendimiaTech Hackathon 2026 · Track Hedera
+            </p>
+            <p class="footer__author">
+                Desarrollado por <strong>Julieta Eyzaguirre Arenas</strong> · Ingeniera Informática y Educadora
+            </p>
+            <p class="footer__quote">"La verdadera innovación no es solo tecnológica. Es inclusiva."</p>
+        </div>
+    </footer>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>

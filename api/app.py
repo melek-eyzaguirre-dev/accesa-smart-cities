@@ -14,7 +14,7 @@ Esta API permite:
 Todo desde una interfaz web simple (HTTP requests).
 """
 
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
 import logging
 import sys
@@ -42,7 +42,9 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # Crear la app Flask
-app = Flask(__name__)
+# Configurar para servir frontend desde la carpeta /frontend
+frontend_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'frontend')
+app = Flask(__name__, static_folder=frontend_dir, static_url_path='/static')
 CORS(app)  # Permitir requests desde cualquier origen (para desarrollo)
 
 # Variables globales para mantener estado
@@ -73,13 +75,20 @@ def initialize_services():
 
 @app.route('/')
 def home():
-    """Ruta principal - información de la API."""
+    """Ruta principal - Dashboard frontend."""
+    return send_from_directory(frontend_dir, 'index.html')
+
+
+@app.route('/api/info')
+def api_info():
+    """Información de la API (JSON)."""
     return jsonify({
         "name": "ACCESA Smart Cities API",
         "version": "1.0.0",
         "description": "API para pagos de accesibilidad con agentes de IA en Hedera",
         "endpoints": {
-            "GET /": "Esta página",
+            "GET /": "Dashboard frontend",
+            "GET /api/info": "Información de la API",
             "GET /health": "Estado del sistema",
             "GET /account/balance": "Consultar balance de cuenta",
             "POST /token/create": "Crear token ACCESA",
@@ -124,7 +133,10 @@ def get_balance():
         account_id = request.args.get('account_id')
         if not account_id:
             # Usar la cuenta del operador por defecto
-            account_id = str(client.operatorAccountId)
+            try:
+                account_id = client.operatorAccountId.toString()
+            except Exception:
+                account_id = str(client.operatorAccountId)
         
         balance = hedera_service.get_account_balance(account_id)
         return jsonify(balance)

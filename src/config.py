@@ -104,10 +104,20 @@ class HederaConfig:
     
     def get_account_info(self) -> dict:
         """Devuelve información sobre la cuenta configurada"""
+        try:
+            account_id_str = self.account_id.toString()
+        except Exception:
+            account_id_str = str(self.account_id)
+        
+        try:
+            token_id_str = self.accesa_token_id.toString() if self.accesa_token_id else None
+        except Exception:
+            token_id_str = str(self.accesa_token_id) if self.accesa_token_id else None
+        
         return {
-            "account_id": str(self.account_id),
+            "account_id": account_id_str,
             "network": self.network,
-            "accesa_token_id": str(self.accesa_token_id) if self.accesa_token_id else None
+            "accesa_token_id": token_id_str
         }
 
 
