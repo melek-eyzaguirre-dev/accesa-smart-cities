@@ -1,0 +1,40 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+dist/
+build/
+eggs/
+*.egg
+
+# Entornos virtuales
+venv/
+.venv/
+env/
+
+# Variables de entorno (contienen claves privadas!)
+.env
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Pytest
+.pytest_cache/
+
+# Logs
+*.log
+
+# Archivos temporales
+.abacus.donotdelete
+
+# Antigravity
+.antigravityignore

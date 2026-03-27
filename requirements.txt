@@ -1,0 +1,31 @@
+# Hedera SDK - SDK oficial de Hedera para Python
+# Esta es la biblioteca principal que nos permite interactuar con la red Hedera
+hedera-sdk-py>=2.30.0
+
+# Flask - Framework web para crear nuestra API
+Flask>=3.0.0
+Flask-CORS>=4.0.0
+
+# OpenAI - Para crear agentes de IA inteligentes
+openai>=1.12.0
+
+# Antropic - Alternativa para agentes de IA
+anthropic>=0.18.0
+
+# Python-dotenv - Para manejar variables de entorno de forma segura
+python-dotenv>=1.0.0
+
+# Requests - Para hacer llamadas HTTP
+requests>=2.31.0
+
+# Pydantic - Para validación de datos
+pydantic>=2.5.0
+
+# Colorama - Para logs coloridos en la terminal
+colorama>=0.4.6
+
+# Schedule - Para pagos programados
+schedule>=1.2.0
+
+# Rich - Para interfaces de terminal más bonitas
+rich>=13.7.0
