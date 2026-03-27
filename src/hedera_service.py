@@ -28,6 +28,14 @@ from decimal import Decimal
 logger = logging.getLogger(__name__)
 
 
+def java_to_str(obj):
+    """Convierte un objeto Java del SDK de Hedera a string Python."""
+    try:
+        return obj.toString()
+    except Exception:
+        return str(obj)
+
+
 class HederaService:
     """
     Servicio para operaciones básicas en Hedera.
@@ -75,14 +83,28 @@ class HederaService:
             # Convertir a formato legible
             result = {
                 "account_id": account_id,
-                "hbar_balance": float(balance.hbars.toString()),
+                "hbar_balance": float(balance.hbars.toString().replace(' ℏ', '').replace('ℏ', '').strip()),
                 "tokens": {}
             }
             
             # Si tiene tokens, agregarlos
             if balance.tokens:
-                for token_id, amount in balance.tokens.items():
-                    result["tokens"][str(token_id)] = amount
+                try:
+                    # balance.tokens es un java.util.Map, no un dict Python
+                    entry_set = balance.tokens.entrySet()
+                    iterator = entry_set.iterator()
+                    while iterator.hasNext():
+                        entry = iterator.next()
+                        token_id_str = entry.getKey().toString()
+                        amount = int(entry.getValue())
+                        result["tokens"][token_id_str] = amount
+                except Exception:
+                    # Fallback: intentar como dict Python
+                    try:
+                        for token_id, amount in balance.tokens.items():
+                            result["tokens"][str(token_id)] = int(amount)
+                    except Exception:
+                        pass  # Si falla, dejar tokens vacío
             
             logger.info(f"✅ Balance: {result['hbar_balance']} HBAR")
             return result
@@ -148,16 +170,16 @@ class HederaService:
             receipt = response.getReceipt(self.client)
             
             # Obtener el ID de la transacción
-            tx_id = str(response.transactionId)
+            tx_id = java_to_str(response.transactionId)
             
             result = {
                 "status": "success",
                 "transaction_id": tx_id,
-                "from": str(self.client.operatorAccountId),
+                "from": java_to_str(self.client.operatorAccountId),
                 "to": to_account_id,
                 "amount": amount,
                 "memo": memo,
-                "receipt_status": str(receipt.status)
+                "receipt_status": java_to_str(receipt.status)
             }
             
             logger.info(f"✅ Transferencia exitosa! TX ID: {tx_id}")

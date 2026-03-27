@@ -1,7 +1,8 @@
 /**
  * ACCESA Smart Cities - Frontend Application
  * ============================================
- * Conecta el dashboard con la API Flask
+ * Dashboard premium que conecta con la API Flask
+ * para demostrar agentes de IA + blockchain Hedera
  */
 
 const API_BASE = window.location.origin;
@@ -17,7 +18,7 @@ const state = {
     txCount: 0,
 };
 
-// ===== DOM ELEMENTS =====
+// ===== DOM HELPERS =====
 const $ = (sel) => document.querySelector(sel);
 const $$ = (sel) => document.querySelectorAll(sel);
 
@@ -31,8 +32,8 @@ function showToast(message, type = 'info') {
     container.appendChild(toast);
     setTimeout(() => {
         toast.classList.add('toast--exit');
-        setTimeout(() => toast.remove(), 300);
-    }, 4000);
+        setTimeout(() => toast.remove(), 350);
+    }, 4500);
 }
 
 // ===== API CALLS =====
@@ -57,18 +58,26 @@ async function apiCall(endpoint, method = 'GET', body = null) {
 
 // ===== CONNECTION =====
 async function checkConnection() {
+    const btn = $('#btnConnect');
+    const originalText = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '<span class="btn__spinner"></span> Conectando...';
+
     try {
         const data = await apiCall('/health');
         state.connected = data.status === 'healthy';
         updateConnectionStatus(true, data.network, data.account_id);
-        showToast(`Conectado a Hedera ${data.network.toUpperCase()}`, 'success');
+        showToast(`Conectado a Hedera ${data.network.toUpperCase()} 🎉`, 'success');
         await refreshStats();
         return true;
     } catch (error) {
         state.connected = false;
         updateConnectionStatus(false);
-        showToast('No se pudo conectar. ¿Está corriendo la API? (python api/app.py)', 'error');
+        showToast('No se pudo conectar. ¿Está corriendo python api/app.py?', 'error');
         return false;
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = originalText;
     }
 }
 
@@ -79,35 +88,36 @@ function updateConnectionStatus(connected, network = '', accountId = '') {
 
     dot.className = `status__dot status__dot--${connected ? 'connected' : 'disconnected'}`;
     text.textContent = connected
-        ? `${network} · ${accountId}`
+        ? `${network.toUpperCase()} · ${accountId}`
         : 'Desconectado';
 }
 
 // ===== STATS =====
 async function refreshStats() {
     try {
-        // Balance
         const balance = await apiCall('/account/balance');
-        $('#hbarBalance').textContent = `${parseFloat(balance.hbar_balance).toFixed(2)}`;
-        animateValue($('#hbarBalance'));
+        const balanceEl = $('#hbarBalance');
+        balanceEl.textContent = `${parseFloat(balance.hbar_balance).toFixed(2)} ℏ`;
+        animateValue(balanceEl);
 
-        // Marketplace stats
         const stats = await apiCall('/marketplace/stats');
-        $('#usersCount').textContent = stats.users_registered;
-        $('#servicesCount').textContent = stats.services_registered;
-        animateValue($('#usersCount'));
-        animateValue($('#servicesCount'));
+        const usersEl = $('#usersCount');
+        const servicesEl = $('#servicesCount');
+        usersEl.textContent = stats.users_registered;
+        servicesEl.textContent = stats.services_registered;
+        animateValue(usersEl);
+        animateValue(servicesEl);
     } catch (error) {
         console.log('Stats refresh error (API may not be running)');
     }
 }
 
 function animateValue(el) {
-    el.style.transform = 'scale(1.15)';
-    el.style.transition = 'transform 0.3s ease';
+    el.style.transform = 'scale(1.2)';
+    el.style.transition = 'transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1)';
     setTimeout(() => {
         el.style.transform = 'scale(1)';
-    }, 300);
+    }, 350);
 }
 
 // ===== TOKEN =====
@@ -126,9 +136,9 @@ async function createToken() {
         state.tokenCreated = true;
         state.tokenId = result.token_id;
 
-        // Update UI
-        $('#tokenStatus').textContent = state.tokenId;
-        animateValue($('#tokenStatus'));
+        const tokenStatusEl = $('#tokenStatus');
+        tokenStatusEl.textContent = state.tokenId;
+        animateValue(tokenStatusEl);
 
         const tokenResult = $('#tokenResult');
         tokenResult.classList.remove('hidden');
@@ -249,7 +259,7 @@ function renderServiceAgent(agent) {
         <span class="agent-item__emoji">🏛️</span>
         <div class="agent-item__info">
             <div class="agent-item__name">${agent.agent_id}</div>
-            <div class="agent-item__detail">${serviceCount} servicios disponibles</div>
+            <div class="agent-item__detail">${serviceCount} servicios de accesibilidad</div>
         </div>
     `;
     list.appendChild(item);
@@ -287,7 +297,6 @@ async function executeTransaction(e) {
     btn.disabled = true;
     btn.innerHTML = '<span class="btn__spinner"></span> Procesando en Hedera...';
 
-    // Show animation
     const animEl = $('#txAnimation');
     animEl.classList.remove('hidden');
 
@@ -320,7 +329,7 @@ async function executeTransaction(e) {
                 status: 'success',
             });
 
-            showToast(`Transacción exitosa: ${cost} ACCESA pagados`, 'success');
+            showToast(`✅ Transacción exitosa: ${cost} ACCESA pagados`, 'success');
         } else {
             addTransactionRow({
                 num: state.txCount,
@@ -344,8 +353,6 @@ async function executeTransaction(e) {
 
 function addTransactionRow({ num, user, service, cost, status }) {
     const tbody = $('#txHistoryBody');
-
-    // Remove empty state
     const emptyRow = tbody.querySelector('.table__empty');
     if (emptyRow) emptyRow.remove();
 
@@ -356,7 +363,7 @@ function addTransactionRow({ num, user, service, cost, status }) {
     const statusLabel = status === 'success' ? '✅ Éxito' : '❌ Rechazada';
 
     row.innerHTML = `
-        <td>${num}</td>
+        <td><strong>${num}</strong></td>
         <td>${user}</td>
         <td>${service}</td>
         <td><strong>${cost}</strong></td>
@@ -364,6 +371,24 @@ function addTransactionRow({ num, user, service, cost, status }) {
     `;
 
     tbody.insertBefore(row, tbody.firstChild);
+}
+
+// ===== DEMO PROGRESS =====
+function updateDemoProgress(percent, text) {
+    const progressEl = $('#demoProgress');
+    const fillEl = $('#demoProgressFill');
+    const textEl = $('#demoProgressText');
+
+    progressEl.classList.remove('hidden');
+    fillEl.style.width = `${percent}%`;
+    textEl.textContent = text;
+}
+
+function hideDemoProgress() {
+    setTimeout(() => {
+        const progressEl = $('#demoProgress');
+        if (progressEl) progressEl.classList.add('hidden');
+    }, 2000);
 }
 
 // ===== DEMO MODE =====
@@ -377,15 +402,17 @@ async function runDemo() {
 
     const btn = $('#btnDemo');
     btn.disabled = true;
+    btn.innerHTML = '<span class="btn__spinner"></span> Demo en curso...';
 
     try {
         // Step 1: Create token
-        showToast('Paso 1/4: Creando Token ACCESA...', 'info');
+        updateDemoProgress(10, 'Paso 1/4 — Creando Token ACCESA en Hedera...');
         await createToken();
-        await sleep(1000);
+        updateDemoProgress(25, 'Token creado ✅');
+        await sleep(800);
 
         // Step 2: Create users
-        showToast('Paso 2/4: Creando agentes de usuario...', 'info');
+        updateDemoProgress(30, 'Paso 2/4 — Creando agentes de usuario...');
 
         const users = [
             { user_id: 'maria_lopez', accessibility_needs: ['visual_impairment'], initial_budget: 500 },
@@ -393,31 +420,36 @@ async function runDemo() {
             { user_id: 'ana_martinez', accessibility_needs: ['mobility'], initial_budget: 200 },
         ];
 
-        for (const user of users) {
+        for (let i = 0; i < users.length; i++) {
+            const user = users[i];
+            updateDemoProgress(30 + ((i + 1) / users.length) * 15, `Creando agente: ${user.user_id}...`);
             const result = await apiCall('/agent/user/create', 'POST', user);
             state.userAgents.push(result);
             renderUserAgent(result);
-            await sleep(500);
+            await sleep(400);
         }
         updateTxUserSelect();
-        await sleep(500);
+        updateDemoProgress(50, 'Agentes de usuario creados ✅');
+        await sleep(400);
 
         // Step 3: Create services
-        showToast('Paso 3/4: Creando agentes de servicio...', 'info');
+        updateDemoProgress(55, 'Paso 3/4 — Registrando servicios de accesibilidad...');
 
         const services = ['Municipalidad_Mendoza', 'Hospital_Central'];
-        for (const name of services) {
-            const result = await apiCall('/agent/service/create', 'POST', { building_name: name });
+        for (let i = 0; i < services.length; i++) {
+            updateDemoProgress(55 + ((i + 1) / services.length) * 15, `Registrando: ${services[i].replace(/_/g, ' ')}...`);
+            const result = await apiCall('/agent/service/create', 'POST', { building_name: services[i] });
             state.serviceAgents.push(result);
             renderServiceAgent(result);
-            await sleep(500);
+            await sleep(400);
         }
 
         await refreshStats();
-        await sleep(500);
+        updateDemoProgress(75, 'Servicios registrados ✅');
+        await sleep(400);
 
         // Step 4: Execute transactions
-        showToast('Paso 4/4: Ejecutando transacciones agente-a-agente...', 'info');
+        updateDemoProgress(78, 'Paso 4/4 — Ejecutando transacciones agente-a-agente...');
 
         const txs = [
             { user_id: 'maria_lopez', service_type: 'visual_impairment' },
@@ -434,8 +466,14 @@ async function runDemo() {
         const animEl = $('#txAnimation');
         animEl.classList.remove('hidden');
 
-        for (const tx of txs) {
+        // Scroll to transactions section
+        document.getElementById('transactions').scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+        for (let i = 0; i < txs.length; i++) {
+            const tx = txs[i];
             state.txCount++;
+            updateDemoProgress(78 + ((i + 1) / txs.length) * 18, `TX ${i + 1}/${txs.length}: ${tx.user_id} → ${serviceLabels[tx.service_type]}`);
+
             $('#txAnimUser').textContent = tx.user_id;
             $('#txAnimService').textContent = serviceLabels[tx.service_type];
 
@@ -461,15 +499,19 @@ async function runDemo() {
                 });
             }
 
-            await sleep(1500);
+            await sleep(1200);
         }
 
         await refreshStats();
-        showToast('🏆 ¡Demo completada exitosamente!', 'success');
+        updateDemoProgress(100, '🏆 ¡Demo completada exitosamente!');
+        showToast('🏆 ¡Demo completada! Todos los agentes ejecutaron pagos en Hedera.', 'success');
+        hideDemoProgress();
     } catch (error) {
         showToast(`Error en demo: ${error.message}`, 'error');
+        hideDemoProgress();
     } finally {
         btn.disabled = false;
+        btn.innerHTML = '<span class="btn__icon">🚀</span> Demo Rápida';
     }
 }
 
@@ -487,6 +529,21 @@ function setupNavigation() {
     });
 }
 
+// ===== COUNTER ANIMATION =====
+function animateCounters() {
+    const cards = $$('.stat-card');
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
+            }
+        });
+    }, { threshold: 0.2 });
+
+    cards.forEach((card) => observer.observe(card));
+}
+
 // ===== INITIALIZE =====
 function init() {
     // Event listeners
@@ -498,11 +555,13 @@ function init() {
     $('#formTransaction').addEventListener('submit', executeTransaction);
 
     setupNavigation();
+    animateCounters();
 
-    // Try auto-connect
-    setTimeout(() => checkConnection(), 500);
+    // Try auto-connect after a short delay
+    setTimeout(() => checkConnection(), 600);
 
-    console.log('🏙️ ACCESA Smart Cities Dashboard initialized');
+    console.log('%c🏙️ ACCESA Smart Cities Dashboard', 'color: #8b5cf6; font-size: 16px; font-weight: bold');
+    console.log('%cBlockchain + IA para Ciudades Inclusivas', 'color: #06d6a0; font-size: 12px');
 }
 
 document.addEventListener('DOMContentLoaded', init);

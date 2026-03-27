@@ -37,6 +37,14 @@ from typing import Dict, Any, Optional
 logger = logging.getLogger(__name__)
 
 
+def java_to_str(obj):
+    """Convierte un objeto Java del SDK de Hedera a string Python."""
+    try:
+        return obj.toString()
+    except Exception:
+        return str(obj)
+
+
 class AccesaTokenService:
     """
     Servicio para manejar el token ACCESA.
@@ -133,15 +141,31 @@ class AccesaTokenService:
             # Obtener el Token ID del receipt
             self.token_id = receipt.tokenId
             
+            # Convertir Java objects a strings legibles
+            try:
+                token_id_str = self.token_id.toString()
+            except Exception:
+                token_id_str = str(self.token_id)
+            
+            try:
+                treasury_str = self.client.operatorAccountId.toString()
+            except Exception:
+                treasury_str = str(self.client.operatorAccountId)
+            
+            try:
+                tx_id_str = response.transactionId.toString()
+            except Exception:
+                tx_id_str = str(response.transactionId)
+            
             result = {
                 "status": "success",
-                "token_id": str(self.token_id),
+                "token_id": token_id_str,
                 "token_name": "ACCESA Smart Cities Token",
                 "token_symbol": "ACCESA",
                 "initial_supply": initial_supply,
                 "decimals": decimals,
-                "treasury_account": str(self.client.operatorAccountId),
-                "transaction_id": str(response.transactionId)
+                "treasury_account": treasury_str,
+                "transaction_id": tx_id_str
             }
             
             logger.info(f"""
@@ -203,8 +227,8 @@ class AccesaTokenService:
             result = {
                 "status": "success",
                 "account_id": account_id,
-                "token_id": str(token_id_obj),
-                "transaction_id": str(response.transactionId)
+                "token_id": java_to_str(token_id_obj),
+                "transaction_id": java_to_str(response.transactionId)
             }
             
             logger.info(f"✅ Cuenta {account_id} asociada exitosamente")
@@ -270,11 +294,11 @@ class AccesaTokenService:
             
             result = {
                 "status": "success",
-                "transaction_id": str(response.transactionId),
-                "from": str(self.client.operatorAccountId),
+                "transaction_id": java_to_str(response.transactionId),
+                "from": java_to_str(self.client.operatorAccountId),
                 "to": to_account_id,
                 "amount": amount,
-                "token_id": str(token_id_obj),
+                "token_id": java_to_str(token_id_obj),
                 "memo": memo
             }
             

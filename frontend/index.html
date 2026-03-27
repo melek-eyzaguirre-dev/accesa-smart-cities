@@ -3,8 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="ACCESA Smart Cities - Sistema de Pagos Automatizados para Accesibilidad en Ciudades Inteligentes con Hedera Blockchain">
-    <title>ACCESA Smart Cities | Dashboard</title>
+    <meta name="description" content="ACCESA Smart Cities - Sistema de Pagos Automatizados para Accesibilidad en Ciudades Inteligentes con Hedera Blockchain y Agentes de IA">
+    <meta name="author" content="Julieta Eyzaguirre Arenas">
+    <meta name="theme-color" content="#050714">
+    <title>ACCESA Smart Cities | Blockchain + IA para Ciudades Inclusivas</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -20,7 +22,7 @@
             </div>
             <nav class="header__nav" role="navigation" aria-label="Navegación principal">
                 <a href="#dashboard" class="nav__link active" data-section="dashboard">Dashboard</a>
-                <a href="#agents" class="nav__link" data-section="agents">Agentes</a>
+                <a href="#agents" class="nav__link" data-section="agents">Agentes IA</a>
                 <a href="#transactions" class="nav__link" data-section="transactions">Transacciones</a>
             </nav>
             <div class="header__status" id="connectionStatus" role="status" aria-live="polite">
@@ -41,22 +43,29 @@
                 <div class="particle particle--5"></div>
             </div>
             <div class="hero__content">
-                <span class="hero__badge">🏆 VendimiaTech Hackathon 2026 • Track Hedera</span>
+                <span class="hero__badge">🏆 VendimiaTech Hackathon 2026 &bull; Track Hedera</span>
                 <h2 class="hero__title">
                     Ciudades Inteligentes
                     <span class="hero__gradient-text">Inclusivas</span>
                 </h2>
                 <p class="hero__description">
-                    Agentes de IA que realizan pagos automáticos en blockchain
-                    para servicios de accesibilidad urbana.
+                    Agentes de IA autónomos que realizan pagos automáticos en
+                    <strong>Hedera Blockchain</strong> para servicios de accesibilidad urbana.
                 </p>
                 <div class="hero__actions">
-                    <button class="btn btn--primary btn--glow" id="btnConnect" aria-label="Conectar con Hedera Testnet">
+                    <button class="btn btn--primary btn--glow btn--large" id="btnConnect" aria-label="Conectar con Hedera Testnet">
                         <span class="btn__icon">🔗</span> Conectar a Hedera
                     </button>
-                    <button class="btn btn--secondary" id="btnDemo" aria-label="Ejecutar demo completa">
+                    <button class="btn btn--secondary btn--large" id="btnDemo" aria-label="Ejecutar demo completa">
                         <span class="btn__icon">🚀</span> Demo Rápida
                     </button>
+                </div>
+                <!-- Demo progress bar (hidden by default) -->
+                <div class="demo-progress hidden" id="demoProgress">
+                    <div class="demo-progress__bar">
+                        <div class="demo-progress__fill" id="demoProgressFill" style="width: 0%"></div>
+                    </div>
+                    <span class="demo-progress__text" id="demoProgressText">Iniciando...</span>
                 </div>
             </div>
         </section>
@@ -133,7 +142,7 @@
                 <div class="token-result hidden" id="tokenResult" role="alert" aria-live="polite">
                     <div class="token-result__success">
                         <span class="token-result__icon">✅</span>
-                        <span>Token creado: <strong id="tokenIdDisplay"></strong></span>
+                        <span>Token creado exitosamente: <strong id="tokenIdDisplay"></strong></span>
                     </div>
                     <a class="token-result__link" id="tokenHashscanLink" href="#" target="_blank" rel="noopener">
                         Ver en HashScan →
@@ -149,7 +158,7 @@
                     <span class="section__icon" aria-hidden="true">🤖</span>
                     Agentes de IA
                 </h2>
-                <p class="section__subtitle">Crea agentes autónomos que interactúan y realizan pagos en blockchain</p>
+                <p class="section__subtitle">Crea agentes autónomos que interactúan y realizan pagos en blockchain automáticamente</p>
             </div>
 
             <div class="agents-grid">
@@ -158,7 +167,7 @@
                     <h3 class="card__title">
                         <span aria-hidden="true">👤</span> Agentes de Usuario
                     </h3>
-                    <p class="card__description">Representan personas con necesidades de accesibilidad</p>
+                    <p class="card__description">Representan personas con necesidades de accesibilidad. Cada agente toma decisiones autónomas de pago.</p>
                     <form class="form" id="formUserAgent" aria-label="Formulario crear agente de usuario">
                         <div class="form__group">
                             <label class="form__label" for="userId">ID del Usuario</label>
@@ -194,7 +203,7 @@
                     <h3 class="card__title">
                         <span aria-hidden="true">🏢</span> Agentes de Servicio
                     </h3>
-                    <p class="card__description">Representan edificios con servicios de accesibilidad</p>
+                    <p class="card__description">Representan edificios y servicios de accesibilidad urbana. Reciben pagos automáticamente.</p>
                     <form class="form" id="formServiceAgent" aria-label="Formulario crear agente de servicio">
                         <div class="form__group">
                             <label class="form__label" for="buildingName">Nombre del Edificio</label>
@@ -219,7 +228,7 @@
                     <span class="section__icon" aria-hidden="true">💸</span>
                     Transacciones Automáticas
                 </h2>
-                <p class="section__subtitle">Los agentes interactúan y ejecutan pagos en Hedera de forma autónoma</p>
+                <p class="section__subtitle">Los agentes de IA interactúan y ejecutan pagos en Hedera de forma completamente autónoma</p>
             </div>
 
             <div class="transaction-panel">
@@ -308,10 +317,10 @@
     <footer class="footer" role="contentinfo">
         <div class="footer__container">
             <p class="footer__text">
-                <strong>ACCESA Smart Cities</strong> · VendimiaTech Hackathon 2026 · Track Hedera
+                <strong>ACCESA Smart Cities</strong> &middot; VendimiaTech Hackathon 2026 &middot; Track Hedera
             </p>
             <p class="footer__author">
-                Desarrollado por <strong>Julieta Eyzaguirre Arenas</strong> · Ingeniera Informática y Educadora
+                Desarrollado por <strong>Julieta Eyzaguirre Arenas</strong> &middot; Ingeniera Informática y Educadora
             </p>
             <p class="footer__quote">"La verdadera innovación no es solo tecnológica. Es inclusiva."</p>
         </div>
